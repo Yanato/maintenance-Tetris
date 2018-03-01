@@ -24,8 +24,6 @@ public class Board {
 	private Point pieceCenter = new Point(DROP_X, DROP_Y);
 
 	private Piece currentPiece;
-	private Piece savedPiece;
-	private Piece swappingPiece;
 
 	private BoardCell[][] board = new BoardCell[WIDTH][HEIGHT];
 
@@ -45,14 +43,6 @@ public class Board {
 
 	public int getFullLines() {
 		return fullLines;
-	}
-
-	public Piece getSavedPiece() {
-		return savedPiece;
-	}
-
-	public Piece getSwappingPiece() {
-		return swappingPiece;
 	}
 
 	public BoardCell getBoardAt(int x, int y) {
@@ -170,19 +160,6 @@ public class Board {
 			int y = pieceCenter.y + point.y;
 			board[x][y] = BoardCell.getCell(currentPiece.getType());
 		}
-	}
-
-	public void removeCurrentPiece() {
-		if (savedPiece == null) {
-			savedPiece = new Piece(currentPiece.getType(), currentPiece.getType().getPoints(), true);
-			//savedPiece = currentPiece; Provoquait un bug en fonction de la rotation de la piece
-		} else {
-			swappingPiece = savedPiece;
-			//savedPiece = currentPiece; Provoquait un bug en fonction de la rotation de la piece
-			savedPiece = new Piece(currentPiece.getType(), currentPiece.getType().getPoints(), true);
-
-		}
-		currentPiece = null;
 	}
 
 	private void mv(int moveX, int moveY) {

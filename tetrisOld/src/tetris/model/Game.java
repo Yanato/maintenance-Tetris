@@ -4,17 +4,11 @@ public class Game {
 
 	private final Board board;
 	private Piece nextPiece;
-	private Score scoreboard = new Score();
-	
-	private Piece savedPiece;
-
-	private boolean alreadySavedThisTurn = false;
 
 	private boolean playing = false;
 	private boolean paused = false;
 	private boolean dropping = false;
 	private boolean gameOver = false;
-	private boolean saved = false;
 
 	private int freeFallIterations;
 	private int totalScore;
@@ -29,13 +23,6 @@ public class Game {
 
 	public Piece getNextPiece() {
 		return nextPiece;
-	}
-	public int scoreboardValues(int rank) {
-		return scoreboard.getAllscore(rank);
-	}
-
-	public Piece getSavedPiece() {
-		return board.getSavedPiece();
 	}
 
 	public long getIterationDelay() {
@@ -70,8 +57,6 @@ public class Game {
 		nextPiece = Piece.getRandomPiece();
 		board.setCurrentPiece(Piece.getRandomPiece());
 		playing = true;
-		scoreboard.testingNewScore(totalScore);
-
 	}
 
 	public boolean isPlaying() {
@@ -86,10 +71,6 @@ public class Game {
 		return gameOver;
 	}
 
-	public boolean isSaved() {
-		return saved;
-	}
-
 	public void pauseGame() {
 		paused = !paused;
 	}
@@ -102,44 +83,22 @@ public class Game {
 		board.moveRight();
 	}
 
-	public void exit() {
-		System.exit(0);
-	}
-
 	public void moveDown() {
 		if (!board.canCurrentPieceMoveDown()) {
 
 			if (freeFallIterations == 0) {
 				playing = false;
 				gameOver = true;
-				scoreboard.testingNewScore(totalScore);				
 			} else {
 				dropping = false;
 				board.setCurrentPiece(nextPiece);
 				nextPiece = Piece.getRandomPiece();
 				totalScore += getScore();
 				freeFallIterations = 0;
-				alreadySavedThisTurn = false;
 			}
 		} else {
 			board.moveDown();
 			freeFallIterations++;
-		}
-	}
-
-	public void savePiece() {
-		if (alreadySavedThisTurn == false) {
-			alreadySavedThisTurn = true;
-			saved = true;
-
-			if (board.getSavedPiece() == null) {
-				board.removeCurrentPiece();
-				nextPiece = Piece.getRandomPiece();
-				board.setCurrentPiece(nextPiece);
-			} else {
-				board.removeCurrentPiece();
-				board.setCurrentPiece(board.getSwappingPiece());
-			}
 		}
 	}
 
