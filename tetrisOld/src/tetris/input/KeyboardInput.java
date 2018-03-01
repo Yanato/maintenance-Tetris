@@ -13,9 +13,13 @@ public class KeyboardInput implements KeyListener {
         currentStates.put(KeyEvent.VK_LEFT, Boolean.FALSE);
         currentStates.put(KeyEvent.VK_RIGHT, Boolean.FALSE);
         currentStates.put(KeyEvent.VK_UP, Boolean.FALSE);
+        currentStates.put(KeyEvent.VK_DOWN, Boolean.FALSE);
+        currentStates.put(KeyEvent.VK_S, Boolean.FALSE);
+
         currentStates.put(KeyEvent.VK_SPACE, Boolean.FALSE);
         currentStates.put(KeyEvent.VK_F2, Boolean.FALSE);
         currentStates.put(KeyEvent.VK_F1, Boolean.FALSE);
+        currentStates.put(KeyEvent.VK_F3, Boolean.FALSE);
     }
 
     public boolean left() {
@@ -33,7 +37,13 @@ public class KeyboardInput implements KeyListener {
     public boolean rotate() {
         return keyDown(KeyEvent.VK_UP);
     }
-
+    public boolean dropSlowly() {
+        return keyDown(KeyEvent.VK_DOWN);
+    }
+    public boolean save() {
+        return keyDown(KeyEvent.VK_S);
+    }
+    
     public boolean pauseGame() {
         return keyDown(KeyEvent.VK_F1);
     }
@@ -41,7 +51,10 @@ public class KeyboardInput implements KeyListener {
     public boolean newGame() {
         return keyDown(KeyEvent.VK_F2);
     }
-
+    public boolean quitGame() {
+        return keyDown(KeyEvent.VK_F3);
+    }
+    
     private boolean keyDown(int keyCode) {
         return currentStates.put(keyCode, Boolean.FALSE);
     }

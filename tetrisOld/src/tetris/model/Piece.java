@@ -8,7 +8,7 @@ public class Piece {
     private final PieceType type;
     private final boolean initialOrientation;
 
-    private Piece(PieceType pieceType, Point[] points, boolean initial) {
+    public Piece(PieceType pieceType, Point[] points, boolean initial) {
         initialOrientation = initial;
         this.points = points;
         this.type = pieceType;

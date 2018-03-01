@@ -2,116 +2,157 @@ package tetris.model;
 
 public class Game {
 
-    private final Board board;
-    private Piece nextPiece;
+	private final Board board;
+	private Piece nextPiece;
+	private Score scoreboard = new Score();
+	
+	private Piece savedPiece;
 
-    private boolean playing = false;
-    private boolean paused = false;
-    private boolean dropping = false;
-    private boolean gameOver = false;
+	private boolean alreadySavedThisTurn = false;
 
-    private int freeFallIterations;
-    private int totalScore;
+	private boolean playing = false;
+	private boolean paused = false;
+	private boolean dropping = false;
+	private boolean gameOver = false;
+	private boolean saved = false;
 
-    public Game() {
-        board = new Board();
-    }
+	private int freeFallIterations;
+	private int totalScore;
 
-    public BoardCell[][] getBoardCells() {
-        return board.getBoardWithPiece();
-    }
+	public Game() {
+		board = new Board();
+	}
 
-    public Piece getNextPiece() {
-        return nextPiece;
-    }
+	public BoardCell[][] getBoardCells() {
+		return board.getBoardWithPiece();
+	}
 
-    public long getIterationDelay() {
-        return (long) (((11 - getLevel()) * 0.05) * 1000);
-    }
+	public Piece getNextPiece() {
+		return nextPiece;
+	}
+	public int scoreboardValues(int rank) {
+		return scoreboard.getAllscore(rank);
+	}
 
-    public int getScore() {
-        return ((21 + (3 * getLevel())) - freeFallIterations);
-    }
+	public Piece getSavedPiece() {
+		return board.getSavedPiece();
+	}
 
-    public int getTotalScore() {
-        return totalScore;
-    }
+	public long getIterationDelay() {
+		return (long) (((11 - getLevel()) * 0.05) * 1000);
+	}
 
-    public int getLines() {
-        return board.getFullLines();
-    }
+	public int getScore() {
+		return ((21 + (3 * getLevel())) - freeFallIterations);
+	}
 
-    public int getLevel() {
-        if ((board.getFullLines() >= 1) && (board.getFullLines() <= 90)) {
-            return 1 + ((board.getFullLines() - 1) / 10);
-        } else if (board.getFullLines() >= 91) {
-            return 10;
-        } else {
-            return 1;
-        }
-    }
+	public int getTotalScore() {
+		return totalScore;
+	}
 
-    public void startGame() {
-        paused = false;
-        dropping = false;
-        nextPiece = Piece.getRandomPiece();
-        board.setCurrentPiece(Piece.getRandomPiece());
-        playing = true;
-    }
+	public int getLines() {
+		return board.getFullLines();
+	}
 
-    public boolean isPlaying() {
-        return playing;
-    }
+	public int getLevel() {
+		if ((board.getFullLines() >= 1) && (board.getFullLines() <= 90)) {
+			return 1 + ((board.getFullLines() - 1) / 10);
+		} else if (board.getFullLines() >= 91) {
+			return 10;
+		} else {
+			return 1;
+		}
+	}
 
-    public boolean isPaused() {
-        return paused;
-    }
+	public void startGame() {
+		paused = false;
+		dropping = false;
+		nextPiece = Piece.getRandomPiece();
+		board.setCurrentPiece(Piece.getRandomPiece());
+		playing = true;
+		scoreboard.testingNewScore(totalScore);
 
-    public boolean isGameOver() {
-        return gameOver;
-    }
+	}
 
-    public void pauseGame() {
-        paused = !paused;
-    }
+	public boolean isPlaying() {
+		return playing;
+	}
 
-    public void moveLeft() {
-        board.moveLeft();
-    }
+	public boolean isPaused() {
+		return paused;
+	}
 
-    public void moveRight() {
-        board.moveRight();
-    }
+	public boolean isGameOver() {
+		return gameOver;
+	}
 
-    public void moveDown() {
-        if (!board.canCurrentPieceMoveDown()) {
+	public boolean isSaved() {
+		return saved;
+	}
 
-            if (freeFallIterations == 0) {
-                playing = false;
-                gameOver = true;
-            } else {
-                dropping = false;
-                board.setCurrentPiece(nextPiece);
-                nextPiece = Piece.getRandomPiece();
-                totalScore += getScore();
-                freeFallIterations = 0;
-            }
-        } else {
-            board.moveDown();
-            freeFallIterations++;
-        }
-    }
+	public void pauseGame() {
+		paused = !paused;
+	}
 
-    public void rotate() {
-        board.rotate();
-    }
+	public void moveLeft() {
+		board.moveLeft();
+	}
 
-    public void drop() {
-        dropping = true;
-    }
+	public void moveRight() {
+		board.moveRight();
+	}
 
-    public boolean isDropping() {
-        return dropping;
-    }
+	public void exit() {
+		System.exit(0);
+	}
+
+	public void moveDown() {
+		if (!board.canCurrentPieceMoveDown()) {
+
+			if (freeFallIterations == 0) {
+				playing = false;
+				gameOver = true;
+				scoreboard.testingNewScore(totalScore);				
+			} else {
+				dropping = false;
+				board.setCurrentPiece(nextPiece);
+				nextPiece = Piece.getRandomPiece();
+				totalScore += getScore();
+				freeFallIterations = 0;
+				alreadySavedThisTurn = false;
+			}
+		} else {
+			board.moveDown();
+			freeFallIterations++;
+		}
+	}
+
+	public void savePiece() {
+		if (alreadySavedThisTurn == false) {
+			alreadySavedThisTurn = true;
+			saved = true;
+
+			if (board.getSavedPiece() == null) {
+				board.removeCurrentPiece();
+				nextPiece = Piece.getRandomPiece();
+				board.setCurrentPiece(nextPiece);
+			} else {
+				board.removeCurrentPiece();
+				board.setCurrentPiece(board.getSwappingPiece());
+			}
+		}
+	}
+
+	public void rotate() {
+		board.rotate();
+	}
+
+	public void drop() {
+		dropping = true;
+	}
+
+	public boolean isDropping() {
+		return dropping;
+	}
 
 }
